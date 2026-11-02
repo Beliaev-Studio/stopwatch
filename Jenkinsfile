@@ -55,9 +55,10 @@ pipeline {
               }
               insideCi {
                 // gulp minifies style.css and the images in place, polymer build writes build/default.
+                // Node 22 loads the ESM gulpfile through require(), which fails on its top-level await.
                 sh '''
                   npm ci --no-audit --no-fund
-                  npx gulp publish
+                  NODE_OPTIONS=--no-experimental-require-module npx gulp publish
                   npx polymer build
                   test -s build/default/index.html
                   cp nginx.conf build/default/nginx.conf
